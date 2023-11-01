@@ -1,0 +1,10 @@
+TODO
+
+[ok] - Write tests
+[ok] - Review path for db storage (use something that is absolute and not relative to execution)
+[ok] - Ask to confirm reset (use dialoguer?)
+[ok] - Move all logic of checking and setting up the db to a function
+[ok] - Check if dir for database exists and create if not
+[ok] - Use struct and enums to model data and corresponding actions/methods
+[ok] - Detect when a new database was created and automatically create todo table
+[ok] - Formatting as columns and using dim() for dates.

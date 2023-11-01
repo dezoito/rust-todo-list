@@ -1,0 +1,12 @@
+{
+    "workbench.colorCustomizations": {
+        "titleBar.activeBackground": "#ee0fb6"
+    },
+    "rust-analyzer.linkedProjects": [
+        "./Cargo.toml",
+    ],
+    "[rust]": {
+        "editor.formatOnPaste": true,
+        "editor.formatOnSave": true,
+    },
+}

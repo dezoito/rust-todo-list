@@ -1,0 +1,6 @@
+**/target/*
+target/debug/*
+sled_db/
+output/
+db
+todo.sqlite
