@@ -13,7 +13,7 @@ pub struct Todo {
     pub is_done: i32,
 }
 
-// Get the user's home directory for each platform
+// Get the user's home directory whether they use Linux, MacOS or Windows
 fn get_home() -> String {
     let home_dir = match env::var("HOME") {
         Ok(path) => PathBuf::from(path),
