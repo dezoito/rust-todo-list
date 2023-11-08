@@ -74,7 +74,6 @@ impl Todo {
 
     // Prints a list of todos objects
     pub fn print_list(todos: Vec<Todo>) -> Result<()> {
-        println!("");
         for todo in todos {
             // Styles the string representing the status
             let status = if todo.is_done == 1 {
@@ -83,15 +82,26 @@ impl Todo {
                 style("Pending").red()
             };
             println!(
-                "{:>4} | {:<35} {:<8} {}",
+                "{:>4} | {:<55} {:<8} {}",
                 style(todo.id).cyan().bright(),
-                style(todo.name).bright(),
+                style(truncate_at(&todo.name, 55)).bright(),
                 status,
                 style(todo.date_added).dim(),
             );
         }
         Ok(())
     }
+}
+
+// Truncates an str and adds ellipsis if needed
+pub fn truncate_at(input: &str, max: i32) -> String {
+    let max_len: usize = max as usize;
+    if input.len() > max_len {
+        let truncated = &input[..(max_len - 3)];
+        return format!("{}...", truncated);
+    };
+
+    input.to_string()
 }
 
 // Returns a connection, creating the database if needed

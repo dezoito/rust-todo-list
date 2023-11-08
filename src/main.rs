@@ -31,7 +31,7 @@ fn main() -> Result<()> {
             Ok(())
         }
         "list" => {
-            println!("\nTODO List (sorted by id):");
+            println!("TODO List (sorted by id):");
             let todos = Todo::list(&conn, false)?;
             Todo::print_list(todos)?;
             Ok(())
@@ -84,7 +84,7 @@ fn main() -> Result<()> {
             Ok(())
         }
         "sort" => {
-            println!("\nTODO List (sorted by status):");
+            println!("TODO List (sorted by status):");
             let todos = Todo::list(&conn, true)?;
             Todo::print_list(todos)?;
             Ok(())
