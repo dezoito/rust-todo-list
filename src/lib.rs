@@ -82,9 +82,9 @@ impl Todo {
                 style("Pending").red()
             };
             println!(
-                "{:>4} | {:<55} {:<8} {}",
+                "{:>4} | {:<44} {:<8} {}",
                 style(todo.id).cyan().bright(),
-                style(truncate_at(&todo.name, 55)).bright(),
+                style(truncate_at(&todo.name, 44)).bright(),
                 status,
                 style(todo.date_added).dim(),
             );
