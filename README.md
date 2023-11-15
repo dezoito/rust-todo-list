@@ -8,6 +8,8 @@ This is a simple command line todo list app written in Rust as an exercise with 
 
 The idea for this project was inspired by [Top 15 Rust Projects To Elevate Your Skills](https://zerotomastery.io/blog/rust-practice-projects/) and the suggested [CLI todo app](https://github.com/sioodmy/todo).
 
+If you are new to Rust and would like a better understanding on some of the coding and design decisions for this project, please check my [Rust Todo SQL Example Application](https://dezoito.github.io/2023/11/01/rust-todo-example-application.html) article!
+
 ## Available commands
 
 ```
