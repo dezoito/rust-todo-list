@@ -316,7 +316,7 @@ mod tests {
         Todo::rm(&conn, todos[0].id).expect("Could not remove first todo");
 
         // true means sorted by status
-        let todos = Todo::list(&conn, false).expect("Failed to sort todos");
+        let todos = Todo::list(&conn, false).expect("Failed to list todos");
         dbg!(&todos);
 
         assert_eq!(
