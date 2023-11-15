@@ -204,3 +204,173 @@ fn get_home() -> String {
         None => panic!("Failed to convert home directory to a string."),
     }
 }
+
+/* -----------------------------------------------------------
+ *    Tests
+ * ---------------------------------------------------------*/
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use lazy_static::lazy_static;
+    use std::sync::Mutex;
+
+    // Creates a persistant in memory db connection
+    // creates tables if necessary
+    lazy_static! {
+        static ref DATABASE_CONNECTION: Mutex<Connection> = {
+            let conn = Connection::open_in_memory().expect("Failed to create in-memory database");
+            verify_db(&conn).expect("Cannot create tables");
+            Mutex::new(conn)
+        };
+    }
+
+    fn reset_db(conn: &Connection) -> Result<()> {
+        conn.execute("DELETE FROM todo", ())?;
+        Ok(())
+    }
+
+    fn contains_task(todos: &Vec<Todo>, target_name: &str) -> bool {
+        for todo in todos {
+            if todo.name == target_name {
+                return true;
+            }
+        }
+        false
+    }
+
+    #[test]
+    fn test_add_todo() {
+        let conn = DATABASE_CONNECTION.lock().expect("Mutex lock failed");
+        reset_db(&conn).expect("Fucked up resetting the db");
+
+        // Call the add function to add a todo
+        let name = "Test Todo";
+        Todo::add(&conn, name).expect("Failed to add todo");
+
+        // Query the database to check if the todo was added
+        let mut stmt = conn
+            .prepare("SELECT COUNT(*) FROM todo WHERE name = ?")
+            .expect("Failed to prepare statement");
+        let count: i32 = stmt
+            .query_row(&[name], |row| row.get(0))
+            .expect("Failed to query database");
+
+        assert_eq!(count, 1, "Todo was not added to the database");
+    }
+
+    #[test]
+    fn test_list_todo() {
+        let conn = DATABASE_CONNECTION.lock().expect("Mutex lock failed");
+        reset_db(&conn).expect("Fucked up resetting the db");
+
+        Todo::add(&conn, "Task 1").expect("Could not add todo");
+        Todo::add(&conn, "Task 2").expect("Could not add todo");
+        Todo::add(&conn, "Task 3").expect("Could not add todo");
+        let todos = Todo::list(&conn, false).expect("Failed to list todo");
+
+        assert_eq!(
+            todos.len(),
+            3,
+            "Wrong number of todo items returned by list()"
+        );
+    }
+
+    #[test]
+    fn test_sort_todo() {
+        let conn = DATABASE_CONNECTION.lock().expect("Mutex lock failed");
+        reset_db(&conn).expect("Fucked up resetting the db");
+
+        Todo::add(&conn, "Task 1").expect("Could not add todo");
+        Todo::add(&conn, "Task 2").expect("Could not add todo");
+        Todo::add(&conn, "Task 3").expect("Could not add todo");
+        let todos = Todo::list(&conn, false).expect("Failed to list todo");
+        // toggles the first entry
+        Todo::toggle(&conn, todos[0].id).expect("Could not toggle first todo");
+
+        // true means sorted by status
+        let todos = Todo::list(&conn, true).expect("Failed to sort todos");
+
+        assert_eq!(
+            todos[2].name, "Task 1",
+            "The todo marked as done was not the LAST one returned"
+        );
+
+        assert_eq!(
+            todos.len(),
+            3,
+            "Wrong number of todo items returned by sort()"
+        );
+    }
+
+    #[test]
+    fn test_rm_todo() {
+        let conn = DATABASE_CONNECTION.lock().expect("Mutex lock failed");
+        reset_db(&conn).expect("Fucked up resetting the db");
+
+        Todo::add(&conn, "Task 1").expect("Could not add todo");
+        Todo::add(&conn, "Task 2").expect("Could not add todo");
+        Todo::add(&conn, "Task 3").expect("Could not add todo");
+        let todos = Todo::list(&conn, false).expect("Failed to list todo");
+        // toggles the first entry
+        Todo::rm(&conn, todos[0].id).expect("Could not remove first todo");
+
+        // true means sorted by status
+        let todos = Todo::list(&conn, false).expect("Failed to sort todos");
+        dbg!(&todos);
+
+        assert_eq!(
+            todos.len(),
+            2,
+            "Wrong number of todo items returned by sort()"
+        );
+
+        assert_eq!(
+            contains_task(&todos, "Task 1"),
+            false,
+            "Task 1 was not deleted!"
+        );
+    }
+
+    #[test]
+    fn test_toggle_todo() {
+        let conn = DATABASE_CONNECTION.lock().expect("Mutex lock failed");
+        reset_db(&conn).expect("Fucked up resetting the db");
+
+        Todo::add(&conn, "Task 1").expect("Could not add todo");
+        Todo::add(&conn, "Task 2").expect("Could not add todo");
+        let todos = Todo::list(&conn, false).expect("Failed to list todo");
+        // toggles the first entry
+        Todo::toggle(&conn, todos[0].id).expect("Could not toggle first todo");
+
+        // true means sorted by status
+        let todos = Todo::list(&conn, false).expect("Failed to sort todos");
+        dbg!(&todos);
+
+        assert_eq!(
+            todos.len(),
+            2,
+            "Wrong number of todo items returned by toggle()"
+        );
+
+        // True and False are stored as 0  or 1 in the db
+        assert_eq!(todos[0].is_done, 1, "Task 1 was not toggled!");
+    }
+
+    #[test]
+    fn test_reset_todo() {
+        let conn = DATABASE_CONNECTION.lock().expect("Mutex lock failed");
+        Todo::add(&conn, "Some task").expect("Could not add todo");
+        Todo::reset(&conn).expect("Fucked up resetting the db");
+
+        let todos = Todo::list(&conn, false).expect("Failed to list todo");
+
+        assert_eq!(todos.len(), 0, "There are still todos left after reset()");
+
+        assert_eq!(
+            contains_task(&todos, "Task 1"),
+            false,
+            "Task 1 was not deleted!"
+        );
+    }
+}
