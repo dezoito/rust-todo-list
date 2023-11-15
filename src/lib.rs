@@ -242,7 +242,7 @@ mod tests {
     #[test]
     fn test_add_todo() {
         let conn = DATABASE_CONNECTION.lock().expect("Mutex lock failed");
-        reset_db(&conn).expect("Fucked up resetting the db");
+        reset_db(&conn).expect("Messed up resetting the db");
 
         // Call the add function to add a todo
         let name = "Test Todo";
@@ -262,7 +262,7 @@ mod tests {
     #[test]
     fn test_list_todo() {
         let conn = DATABASE_CONNECTION.lock().expect("Mutex lock failed");
-        reset_db(&conn).expect("Fucked up resetting the db");
+        reset_db(&conn).expect("Messed up resetting the db");
 
         Todo::add(&conn, "Task 1").expect("Could not add todo");
         Todo::add(&conn, "Task 2").expect("Could not add todo");
@@ -279,7 +279,7 @@ mod tests {
     #[test]
     fn test_sort_todo() {
         let conn = DATABASE_CONNECTION.lock().expect("Mutex lock failed");
-        reset_db(&conn).expect("Fucked up resetting the db");
+        reset_db(&conn).expect("Messed up resetting the db");
 
         Todo::add(&conn, "Task 1").expect("Could not add todo");
         Todo::add(&conn, "Task 2").expect("Could not add todo");
@@ -306,7 +306,7 @@ mod tests {
     #[test]
     fn test_rm_todo() {
         let conn = DATABASE_CONNECTION.lock().expect("Mutex lock failed");
-        reset_db(&conn).expect("Fucked up resetting the db");
+        reset_db(&conn).expect("Messed up resetting the db");
 
         Todo::add(&conn, "Task 1").expect("Could not add todo");
         Todo::add(&conn, "Task 2").expect("Could not add todo");
@@ -335,7 +335,7 @@ mod tests {
     #[test]
     fn test_toggle_todo() {
         let conn = DATABASE_CONNECTION.lock().expect("Mutex lock failed");
-        reset_db(&conn).expect("Fucked up resetting the db");
+        reset_db(&conn).expect("Messed up resetting the db");
 
         Todo::add(&conn, "Task 1").expect("Could not add todo");
         Todo::add(&conn, "Task 2").expect("Could not add todo");
@@ -361,7 +361,7 @@ mod tests {
     fn test_reset_todo() {
         let conn = DATABASE_CONNECTION.lock().expect("Mutex lock failed");
         Todo::add(&conn, "Some task").expect("Could not add todo");
-        Todo::reset(&conn).expect("Fucked up resetting the db");
+        Todo::reset(&conn).expect("Messed up resetting the db");
 
         let todos = Todo::list(&conn, false).expect("Failed to list todo");
 
