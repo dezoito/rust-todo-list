@@ -10,12 +10,12 @@ pub struct Todo {
     pub id: i32,
     pub name: String,
     pub date_added: String, // Using f64 for timestamp
-    pub is_done: i32,
+    pub is_done: u8,
 }
 
 impl Todo {
     // Constructor for a new Todo instance
-    pub fn new(id: i32, name: String, date_added: String, is_done: i32) -> Self {
+    pub fn new(id: i32, name: String, date_added: String, is_done: u8) -> Self {
         Todo {
             id,
             name,
